@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="ejayyoung.github.io/"/>
-  <updated>2017-08-18T14:24:40.275Z</updated>
+  <updated>2017-08-18T14:27:00.157Z</updated>
   <id>ejayyoung.github.io/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="ejayyoung.github.io/2017/08/18/reflux-startup/"/>
     <id>ejayyoung.github.io/2017/08/18/reflux-startup/</id>
     <published>2017-08-18T14:08:49.000Z</published>
-    <updated>2017-08-18T14:24:40.275Z</updated>
+    <updated>2017-08-18T14:27:00.157Z</updated>
     
     <content type="html"><![CDATA[<p>学习Reflux已有三月有余，最近不忙便做个了小demo来校验下自己对于react,reflux的理解。<br><a href="https://github.com/eJayYoung/simple-react-reflux" target="_blank" rel="external">demo地址</a><a id="more"></a></p>
 <h1 id="Usage"><a href="#Usage" class="headerlink" title="Usage"></a>Usage</h1><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">git <span class="keyword">clone</span> <span class="title">https</span>://github.com/eJayYoung/simple-react-reflux.git</div><div class="line">npm install</div><div class="line">npm run <span class="literal">start</span></div></pre></td></tr></table></figure>
@@ -61,18 +61,8 @@
     作用：创建单个action
 
     函数接收的参数为一个对象
+    <figure class="highlight nimrod"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">    actionName: 'myActionName', //action名字</div><div class="line">    children: ['childAction'], </div><div class="line">    //用于异步操作时创建子action</div><div class="line">    asyncResult: <span class="literal">true</span>,</div><div class="line">    //为<span class="literal">true</span>时会自动创建 `completed` 和 `failed` 两个子action，可以认为是设置子action的快捷方式</div><div class="line">    sync: <span class="literal">false</span>,</div><div class="line">    //为<span class="literal">true</span>时指定action的默认触发方式为同步</div><div class="line">    preEmit: function() <span class="meta">&#123;...&#125;</span></div><div class="line">    shouldEmit: function() <span class="meta">&#123;...&#125;</span>            </div><div class="line">&#125;</div></pre></td></tr></table></figure>
 
-        {
-            actionName: &apos;myActionName&apos;, //action名字
-            children: [&apos;childAction&apos;], 
-            //用于异步操作时创建子action
-            asyncResult: true,
-            //为true时会自动创建 `completed` 和 `failed` 两个子action，可以认为是设置子action的快捷方式
-            sync: false,
-            //为true时指定action的默认触发方式为同步
-            preEmit: function() {...}
-            shouldEmit: function() {...}            
-        }
 - Reflux.createActions()
 
     作用：顾名思义，创建多个action
@@ -97,9 +87,9 @@
     </summary>
     
     
-      <category term="React" scheme="ejayyoung.github.io/tags/React/"/>
-    
       <category term="javascript" scheme="ejayyoung.github.io/tags/javascript/"/>
+    
+      <category term="React" scheme="ejayyoung.github.io/tags/React/"/>
     
       <category term="Reflux" scheme="ejayyoung.github.io/tags/Reflux/"/>
     
