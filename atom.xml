@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="ejayyoung.github.io/"/>
-  <updated>2017-08-18T14:27:00.157Z</updated>
+  <updated>2017-08-19T00:40:49.653Z</updated>
   <id>ejayyoung.github.io/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="ejayyoung.github.io/2017/08/18/reflux-startup/"/>
     <id>ejayyoung.github.io/2017/08/18/reflux-startup/</id>
     <published>2017-08-18T14:08:49.000Z</published>
-    <updated>2017-08-18T14:27:00.157Z</updated>
+    <updated>2017-08-19T00:40:49.653Z</updated>
     
     <content type="html"><![CDATA[<p>学习Reflux已有三月有余，最近不忙便做个了小demo来校验下自己对于react,reflux的理解。<br><a href="https://github.com/eJayYoung/simple-react-reflux" target="_blank" rel="external">demo地址</a><a id="more"></a></p>
 <h1 id="Usage"><a href="#Usage" class="headerlink" title="Usage"></a>Usage</h1><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">git <span class="keyword">clone</span> <span class="title">https</span>://github.com/eJayYoung/simple-react-reflux.git</div><div class="line">npm install</div><div class="line">npm run <span class="literal">start</span></div></pre></td></tr></table></figure>
@@ -86,6 +86,8 @@
     
     </summary>
     
+      <category term="技术" scheme="ejayyoung.github.io/categories/%E6%8A%80%E6%9C%AF/"/>
+    
     
       <category term="javascript" scheme="ejayyoung.github.io/tags/javascript/"/>
     
@@ -100,7 +102,7 @@
     <link href="ejayyoung.github.io/2017/08/18/Page-Visibility-API/"/>
     <id>ejayyoung.github.io/2017/08/18/Page-Visibility-API/</id>
     <published>2017-08-18T13:46:42.000Z</published>
-    <updated>2017-08-18T14:06:31.836Z</updated>
+    <updated>2017-08-19T00:41:20.308Z</updated>
     
     <content type="html"><![CDATA[<p>最近做了一次在线考试，觉得有个HTML5的API很有趣，便研究了一番。<br>主要用于浏览器切换tab标签页时会触发。<a id="more"></a></p>
 <h2 id="visibilitychange事件"><a href="#visibilitychange事件" class="headerlink" title="visibilitychange事件"></a>visibilitychange事件</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">document</span>.addEventListener(<span class="string">"visibilitychange"</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;&#125;, <span class="literal">false</span>);</div></pre></td></tr></table></figure>
@@ -135,6 +137,8 @@
       &lt;p&gt;最近做了一次在线考试，觉得有个HTML5的API很有趣，便研究了一番。&lt;br&gt;主要用于浏览器切换tab标签页时会触发。
     
     </summary>
+    
+      <category term="技术" scheme="ejayyoung.github.io/categories/%E6%8A%80%E6%9C%AF/"/>
     
     
       <category term="javascript" scheme="ejayyoung.github.io/tags/javascript/"/>
