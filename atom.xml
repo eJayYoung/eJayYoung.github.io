@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="ejayyoung.github.io/"/>
-  <updated>2017-08-21T14:02:44.969Z</updated>
+  <updated>2017-09-09T06:17:28.189Z</updated>
   <id>ejayyoung.github.io/</id>
   
   <author>
@@ -14,6 +14,74 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>下划线是否破坏可读性？ | UX Booth [译文]</title>
+    <link href="ejayyoung.github.io/2017/09/09/%E4%B8%8B%E5%88%92%E7%BA%BF%E6%98%AF%E5%90%A6%E7%A0%B4%E5%9D%8F%E5%8F%AF%E8%AF%BB%E6%80%A7%EF%BC%9F-UX-Booth/"/>
+    <id>ejayyoung.github.io/2017/09/09/下划线是否破坏可读性？-UX-Booth/</id>
+    <published>2017-09-09T06:03:25.000Z</published>
+    <updated>2017-09-09T06:17:28.189Z</updated>
+    
+    <content type="html"><![CDATA[<p>链接的下划线对我们来说都是很熟悉了，为什么有的设计中需要，有的设计中不需要，本文可以帮助你从视觉和交互的角度来了解其中的奥秘！<a id="more"></a></p>
+<p>本文转载自：<a href="http://www.zcfy.cc" target="_blank" rel="external">众成翻译</a><br>译者：<a href="http://www.zcfy.cc/@eJayYoung" target="_blank" rel="external">eJayYoung</a><br>链接：<a href="http://www.zcfy.cc/article/4160" target="_blank" rel="external">http://www.zcfy.cc/article/4160</a><br>原文：<a href="http://www.uxbooth.com/articles/is-the-underlined-link-hurting-readability/" target="_blank" rel="external">http://www.uxbooth.com/articles/is-the-underlined-link-hurting-readability/</a></p>
+<p>在非常早期的互联网，链接就已经是一个基础的交互元素了。直到现在仍然非常流行：研究表明链接是人们在上网时最流行的操作之一。在过去的30年里，设计师们尝试过设计各式各样的链接，但有一点不会变：下划线。那个蓝色的带下划线的超链接是互联网中最明确并且最好理解的习惯之一。</p>
+<blockquote>
+<p><strong>万维网</strong> 包含了文档和链接。” - Tim Berners-Lee, 1991</p>
+</blockquote>
+<p>译者注：蒂姆·伯纳斯-李（Tim Berners-Lee）是万维网（World Wide Web）的发明者，1990年12月25日，他成功利用互联网实现了HTTP客户端与服务器的第一次通讯。 摘自<a href="https://zh.wikipedia.org/wiki/%E8%92%82%E5%A7%86%C2%B7%E4%BC%AF%E7%BA%B3%E6%96%AF-%E6%9D%8E" target="_blank" rel="external">蒂姆·伯纳斯-李 维基百科</a></p>
+<p>链接在互联网中扮演着中心角色，所以链接标记的视觉表现应该非常明显的影响用户体验和使用。但是随着设备和用户习惯的改变，<strong>下划线链接是否妨碍了而不是帮助了</strong>用户体验和易用性？目前看起来是简易有效的，但是一份<a href="https://vsis-www.informatik.uni-hamburg.de/getDoc.php/publications/119/www2003.pdf" target="_blank" rel="external">来自汉堡(德国)大学的研究</a>表明下划线对于可读性和设计也有不良影响。</p>
+<p>按理说链接保持了用户浏览习惯的基础-我们总需要引入参考文献或者连接其他<a href="http://www.urbandictionary.com/define.php?term=cat%20videos" target="_blank" rel="external">互联网资源</a> (译者注： cat videos 在国外属于一种流行词，类似代表互联网(What the Internet is made of/ Universe))。然后随着互联网的变化和发展-依据设计的审美，代码弹性，用户体验习惯，和各种各样的设备-扪心自问一下：相比1991年我们现在是否应该丢弃下划线链接？</p>
+<h2 id="下划线是什么？"><a href="#下划线是什么？" class="headerlink" title="下划线是什么？"></a>下划线是什么？</h2><p>到底什么是下划线，并且下划线这个惯例是怎么形成的？网上最新的解释，维基百科定义的下划线，是“文字下面一条或多或少的水平线，使用(…)用来强调关键文字”。这个属性作为强调的方法仍然存在于下划线的数字表现形式中，但具有更广泛而不一定是积极的含义。博客<strong>排版指南</strong>中建议“<a href="http://practicaltypography.com/underlining.html" target="_blank" rel="external">不要使用下划线。永远都不要</a>”。在打印机时代留下的引用链接的陋习不再需要了，因为我们现在有其他可用的强调方法。<br><img src="http://p0.qhimg.com/t01db454e1517706f43.png" alt=""></p>
+<blockquote>
+<p>下划线是打印机时代一个枯燥的习惯，打印机没有粗体和斜体样式。所以强调文字唯一的方法就是回车，然后在文字下面标记下划线。这只是打印机时代技术缺陷的一个变通方案。</p>
+</blockquote>
+<p>那么链接如何成为蓝色带下划线的文字的代名词？ 由于网络远离打字文档，文本不再需要下划线来强调。 因此，下划线的意义被重新定义：如果点击，下划线的单词将用户重定向到相关资源。 为什么蓝色？ 这是一个历史事故：在Tim Berners-Lee的WWW浏览器原型时代，大多数电脑都限于16色显示屏（如果它们有颜色的话），蓝色是最接近黑色的颜色。虽然技术迅速发展，超链接依然保持着蓝色和下划线风格。</p>
+<p><img src="http://p0.qhimg.com/t0198b61711f0066425.png" alt=""></p>
+<blockquote>
+<p><strong>译者注</strong>： 这张图片只是用来展示下划线的效果，google搜出来类似英语课文。由于上下文环境不对，所以目前解析不出来了 233  逃：）</p>
+</blockquote>
+<h2 id="下划线的好处"><a href="#下划线的好处" class="headerlink" title="下划线的好处"></a>下划线的好处</h2><p>有很多好理由证实为什么下划线依然保持在链接的视觉方面占主导地位。对于新手，它有很好的辨识度：在过去的30年里有多少交互元素依然保持着原来的风格？它吸引了人们在浏览文本时对链接的注意力，在视觉上也提示了你已经访问过的链接。这些视觉线索有助于增加点击量（所有踩过维基百科的坑的人都知道）</p>
+<p>一些用户发现了下划线链接中断浏览的特性很有用；这样他们可以在页面上更轻松的找到重要或者有用的信息。Lee Munroe 在 Smashing 杂志中坦白的说：“记住，用户从来不会认真阅读，他们只会浏览。你以前可能听过，这是真的。<a href="https://www.smashingmagazine.com/2010/02/the-definitive-guide-to-styling-web-links/" target="_blank" rel="external">所以，让你的链接更明显一些</a>。”</p>
+<p>常见的下划线链接可以给用户浏览或者总结提供一些有用的帮助，遵循 <a href="https://en.wikipedia.org/wiki/Steve_Krug" target="_blank" rel="external">Steve Krug</a> 的名句–“不要让我思考”。下划线链接在无障碍阅读也有所成效。色盲或者色弱的互联网用户可以无障碍识别带下划线的超链接，但不能单独面对有颜色区分的链接。</p>
+<h2 id="负面的用户体验影响"><a href="#负面的用户体验影响" class="headerlink" title="负面的用户体验影响"></a>负面的用户体验影响</h2><p>但是这些加分项并不能让下划线链接免受替代或者吐槽，尤其是UX时代的到来。在2014年，互联网巨头谷歌做出了历史性的决定，<a href="http://www.theverge.com/2014/3/13/5503894/google-removes-underlined-links-site-redesign" target="_blank" rel="external">不再使用下划线链接</a>。根据首席设计师 Jon Wiley 的说法，谷歌为了支持链接色彩区分化而在它的搜索引擎（SERP）中摒弃下划线，对于“改善可读性并创建一个整体简洁的外观”至关重要。即使用户在使用谷歌的SERP中有需要链接的必要场景，一些大型的阅读网站也慢慢放弃链接了。例如，NNGroup 已经放弃了下划线，并且发表了一篇关于<a href="https://www.nngroup.com/articles/clickable-elements/" target="_blank" rel="external">超链接样式</a>的文章。</p>
+<p><img src="http://p0.qhimg.com/t01c3b50cde407497e0.png" alt=""></p>
+<p>谷歌提及改善可读性意味着易用性和整体体验都受到下划线链接的负面影响。依据2003年汉堡大学的研究发现，在不同的链接视觉效果测试中，下划线确实在可读性和全局内容理解上得分最低。链接文本可读性更差并且更难识别出链接的文字。那篇论文指出，虽然“链接标记就是折中的设计”，但是下划线貌似是可读性折中设计里最致命的一点。</p>
+<p>当然，在界面审美和视觉设计方面，下划线是一个折中的设计。根据<a href="http://www.awwwards.com/websites/minimal/" target="_blank" rel="external">Awwwards</a>或者 <a href="http://www.creativebloq.com/web-design/25-websites-use-minimalism-91516685" target="_blank" rel="external">Creative Bloq</a>里所说的，在众多的“优秀极简网站”中，几乎很少使用下划线。我们该如何避免这种折中的设计呢？</p>
+<h2 id="链接的替代和改进方案"><a href="#链接的替代和改进方案" class="headerlink" title="链接的替代和改进方案"></a>链接的替代和改进方案</h2><p>在给网站设计超链接时，设计师有机会改进现有的惯例，或者尝试其他替代方案。其中一个不会脱离现有标准太远的方案是改善蓝色的明暗度。但是，如果设计师想要更极端的方案，则可以考虑的替代方案是根据需求显示链接或者替换色彩，这两种方案都在汉堡大学的研究中都表现不错。</p>
+<h3 id="链接颜色"><a href="#链接颜色" class="headerlink" title="链接颜色"></a>链接颜色</h3><p>在决定链接颜色时，设计师必须考虑颜色对比度，并注意色盲用户。 为了适应所有用户，链接应该与黑色文本保持3：1的对比度，与白色背景保持4:5:1对比度。 幸运的是，有许多工具（包括Adobe Illustrator的内置视图）可以复制一些色盲形式。（译者注：这块有点太专业，实在理解不了 replicate some forms of color blindness：）） 当设计师确定设计符合标准时，这是非常重要的。 Webaim是一个致力于帮助设计师为所有人设计网站的组织，建议如果链接没有被下划线标记，他们应该至少有一些“非颜色指示符”，以便用户可以识别链接，即使他们有视觉障碍。</p>
+<p><img src="http://p0.qhimg.com/t01ea71192677cf6e76.png" alt=""></p>
+<p>如 Jakob Nielsen 所说，“假设链接文本是有颜色的，那就不一定需要用下划线标记”，但是<strong>强调链接是需要的</strong><br>As Jakob Nielsen says, “assuming the link text is colored, it’s not always absolutely necessary to underline it”, but <strong>it is always necessary to emphasize links in some way</strong>.</p>
+<h3 id="根据需求展示链接-也称为-悬停（Hover）"><a href="#根据需求展示链接-也称为-悬停（Hover）" class="headerlink" title="根据需求展示链接 (也称为: 悬停（Hover）)"></a>根据需求展示链接 (也称为: 悬停（Hover）)</h3><p>显示或者隐藏链接需要用户将鼠标悬停在文本上才可以看到相关的样式。虽然这使网站看起来更简洁，但也带来了一些显著的缺陷。没有蓝色文字颜色或者下划线，用户被迫需要寻找链接，导致减少了链接的交互。触摸屏设备还有个问题：移动端用户无法悬停，也不会感谢你隐藏了它们，正如Hoa Loranger在她的NNGroup文章中的建议，“永远不要让用户依靠‘鼠标悬停’来确定文本是否可点击。人们不会花太多时间和精力来寻找链接的”。</p>
+<p><img src="http://p0.qhimg.com/t013a9ac3625d5ff032.png" alt=""></p>
+<h3 id="色彩覆盖-也称为：链接装饰"><a href="#色彩覆盖-也称为：链接装饰" class="headerlink" title="色彩覆盖 (也称为：链接装饰)"></a>色彩覆盖 (也称为：链接装饰)</h3><p>基于Hoa的建议，显示链接的存在是必要的。 但是，它必须是标准的蓝色，下划线的链接吗？ 安迪·罗特里奇（Andy Rutledge）讨论了下划线的一些小众的替代方案，例如“<a href="http://www.andyrutledge.com/styling-text-links.php" target="_blank" rel="external">各种边框类型/位置/配置，背景颜色/图片，甚至不太可取的装饰，如横穿线（line-through）</a>。”虽然这些可能会产生有趣的结果，并且可以适应某些品牌标识，但设计师必须考虑这种选择的可读性影响。</p>
+<p><img src="http://p0.qhimg.com/t0120c2a0a50bf21e36.png" alt=""></p>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>没有必要按照惯例来使用下划线设计链接 - 毕竟，下划线有其缺陷和交互槽点 - 但是在视觉和交互方面需要优先考虑链接。考虑网站中链接的设计和易用性是有必要的。无论选择哪种方法，总有一些黄金准则适用于所有用户体验友好的链接视觉设计。</p>
+<ul>
+<li><p>不是链接的话就不要使用下划线</p>
+</li>
+<li><p>用不同的颜色来区分访问过和未访问过的链接</p>
+</li>
+<li><p>通过编写语义化的HTML来实现链接</p>
+</li>
+<li><p>给链接编写提示语，引导用户将会跳转（类似“点击此处”，避免误会）</p>
+</li>
+<li><p>保持链接文字简短，3-5个词就好</p>
+</li>
+<li><p>在整个网站上保持整体风格的一致性和完整性</p>
+</li>
+<li><p>在任何页面中都不要超过100个链接, <a href="https://www.mattcutts.com/blog/how-many-links-per-page/" target="_blank" rel="external">Matt Cutts 解释了为什么</a></p>
+</li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;链接的下划线对我们来说都是很熟悉了，为什么有的设计中需要，有的设计中不需要，本文可以帮助你从视觉和交互的角度来了解其中的奥秘！
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>Reflux 入门 TodoList</title>
