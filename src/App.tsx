@@ -1,39 +1,39 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import './App.css'
 
-// 二十四节气数据（角度为太阳光线与地面的夹角）
+// 二十四节气数据（角度为太阳光线与地面的夹角 = 90° - 正午太阳高度角）
 const solarTerms = [
-  { name: '冬至', angle: 20, shadowLength: 1.5 },
-  { name: '小寒', angle: 22, shadowLength: 1.46 },
-  { name: '大寒', angle: 24, shadowLength: 1.42 },
-  { name: '立春', angle: 28, shadowLength: 1.36 },
-  { name: '雨水', angle: 32, shadowLength: 1.28 },
-  { name: '惊蛰', angle: 36, shadowLength: 1.2 },
-  { name: '春分', angle: 42, shadowLength: 1.1 },
-  { name: '清明', angle: 48, shadowLength: 0.98 },
-  { name: '谷雨', angle: 54, shadowLength: 0.86 },
-  { name: '立夏', angle: 60, shadowLength: 0.74 },
-  { name: '小满', angle: 66, shadowLength: 0.62 },
-  { name: '芒种', angle: 72, shadowLength: 0.5 },
-  { name: '夏至', angle: 78, shadowLength: 0.4 },
-  { name: '小暑', angle: 74, shadowLength: 0.46 },
-  { name: '大暑', angle: 70, shadowLength: 0.54 },
-  { name: '立秋', angle: 64, shadowLength: 0.66 },
-  { name: '处暑', angle: 58, shadowLength: 0.78 },
-  { name: '白露', angle: 52, shadowLength: 0.9 },
-  { name: '秋分', angle: 46, shadowLength: 1.02 },
-  { name: '寒露', angle: 40, shadowLength: 1.16 },
-  { name: '霜降', angle: 34, shadowLength: 1.3 },
-  { name: '立冬', angle: 30, shadowLength: 1.4 },
-  { name: '小雪', angle: 26, shadowLength: 1.48 },
-  { name: '大雪', angle: 22, shadowLength: 1.5 },
+  { name: '冬至', angle: 53.5, shadowLength: 1.5 },
+  { name: '小寒', angle: 51.4, shadowLength: 1.46 },
+  { name: '大寒', angle: 48.1, shadowLength: 1.42 },
+  { name: '立春', angle: 43.5, shadowLength: 1.36 },
+  { name: '雨水', angle: 38.7, shadowLength: 1.28 },
+  { name: '惊蛰', angle: 33.8, shadowLength: 1.2 },
+  { name: '春分', angle: 30, shadowLength: 1.1 },
+  { name: '清明', angle: 26.1, shadowLength: 0.98 },
+  { name: '谷雨', angle: 21.5, shadowLength: 0.86 },
+  { name: '立夏', angle: 17.1, shadowLength: 0.74 },
+  { name: '小满', angle: 13.4, shadowLength: 0.62 },
+  { name: '芒种', angle: 10.7, shadowLength: 0.5 },
+  { name: '夏至', angle: 6.5, shadowLength: 0.4 },
+  { name: '小暑', angle: 10.7, shadowLength: 0.46 },
+  { name: '大暑', angle: 13.4, shadowLength: 0.54 },
+  { name: '立秋', angle: 17.1, shadowLength: 0.66 },
+  { name: '处暑', angle: 21.5, shadowLength: 0.78 },
+  { name: '白露', angle: 26.1, shadowLength: 0.9 },
+  { name: '秋分', angle: 30, shadowLength: 1.02 },
+  { name: '寒露', angle: 33.8, shadowLength: 1.16 },
+  { name: '霜降', angle: 38.7, shadowLength: 1.3 },
+  { name: '立冬', angle: 43.5, shadowLength: 1.4 },
+  { name: '小雪', angle: 48.1, shadowLength: 1.48 },
+  { name: '大雪', angle: 51.4, shadowLength: 1.5 },
 ]
 
 function App() {
-  const [sunAngle, setSunAngle] = useState(85) // 初始角度（太阳光线与地面夹角）
+  const [sunAngle, setSunAngle] = useState(6.5) // 初始角度（太阳光线与地面夹角）
   const [isDragging, setIsDragging] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
-  const [currentTermIndex, setCurrentTermIndex] = useState(12) // 默认夏至
+  const [currentTermIndex, setCurrentTermIndex] = useState(12) // 默认夏至（index=12）
   const svgRef = useRef<SVGSVGElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -51,16 +51,16 @@ function App() {
   }, [isPlaying])
 
   // 画布参数
-  const width = 1400
+  const width = 1600
   const height = 800
   const centerX = width / 2 + 100 // 圆心更靠右
   const groundY = height - 80
-  const rodHeight = 200
+  const rodHeight = 150
   const rodBottomY = groundY
   const rodBottomX = centerX
   const radius = 350 // 稍微增大半径，让太阳更高
-  const minAngle = 20 // 最小角度（太阳光线与地面夹角）
-  const maxAngle = 85 // 最大角度（太阳光线与地面夹角）
+  const minAngle = 6 // 最小角度（太阳光线与地面夹角）
+  const maxAngle = 54 // 最大角度（太阳光线与地面夹角）
   const centerY = groundY - rodHeight - 50 // 圆心Y坐标
 
   // 杆子顶部坐标
@@ -448,7 +448,7 @@ function App() {
 
             {/* 标注文字 */}
             <text x="20" y={groundY - 15} fill="#FFF" fontSize="16" fontWeight="bold">地面</text>
-            <text x={rodTopX + 20} y={rodTopY - 20} fill="#4A3728" fontSize="16" fontWeight="bold">圭表</text>
+            <text x={rodTopX + 20} y={rodTopY - 20} fill="#4A3728" fontSize="16" fontWeight="bold">立表</text>
 
             {/* 拖动提示 */}
             <g opacity={isDragging ? 0 : 0.8}>
@@ -582,7 +582,7 @@ function App() {
                     {term.name}
                   </div>
                   <div className="text-xs text-slate-500">
-                    {term.angle}° | {term.shadowLength.toFixed(1)}尺
+                    {term.angle}°
                   </div>
                 </div>
               )
