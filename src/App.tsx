@@ -1,60 +1,56 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import './App.css'
 
-// 二十四节气数据（调整到30°到150°范围）
+// 二十四节气数据（角度为太阳光线与地面的夹角）
 const solarTerms = [
-  { name: '冬至', angle: 30, shadowLength: 1.5 },
-  { name: '小寒', angle: 35, shadowLength: 1.42 },
-  { name: '大寒', angle: 40, shadowLength: 1.35 },
-  { name: '立春', angle: 50, shadowLength: 1.28 },
-  { name: '雨水', angle: 60, shadowLength: 1.2 },
-  { name: '惊蛰', angle: 70, shadowLength: 1.12 },
-  { name: '春分', angle: 80, shadowLength: 1.0 },
-  { name: '清明', angle: 90, shadowLength: 0.88 },
-  { name: '谷雨', angle: 100, shadowLength: 0.76 },
-  { name: '立夏', angle: 110, shadowLength: 0.64 },
-  { name: '小满', angle: 120, shadowLength: 0.52 },
-  { name: '芒种', angle: 130, shadowLength: 0.4 },
-  { name: '夏至', angle: 140, shadowLength: 0.3 },
+  { name: '冬至', angle: 20, shadowLength: 1.5 },
+  { name: '小寒', angle: 25, shadowLength: 1.42 },
+  { name: '大寒', angle: 30, shadowLength: 1.35 },
+  { name: '立春', angle: 40, shadowLength: 1.28 },
+  { name: '雨水', angle: 50, shadowLength: 1.2 },
+  { name: '惊蛰', angle: 55, shadowLength: 1.12 },
+  { name: '春分', angle: 60, shadowLength: 1.0 },
+  { name: '清明', angle: 65, shadowLength: 0.88 },
+  { name: '谷雨', angle: 70, shadowLength: 0.76 },
+  { name: '立夏', angle: 75, shadowLength: 0.64 },
+  { name: '小满', angle: 80, shadowLength: 0.52 },
+  { name: '芒种', angle: 82, shadowLength: 0.4 },
+  { name: '夏至', angle: 85, shadowLength: 0.3 },
 ]
 
 function App() {
-  const [sunAngle, setSunAngle] = useState(120) // 初始角度更高一些
+  const [sunAngle, setSunAngle] = useState(85) // 初始角度（太阳光线与地面夹角）
   const [isDragging, setIsDragging] = useState(false)
   const svgRef = useRef<SVGSVGElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
   // 画布参数
-  const width = 900
-  const height = 600
-  const centerX = width / 2 + 150 // 圆心更靠右
+  const width = 1400
+  const height = 800
+  const centerX = width / 2 + 100 // 圆心更靠右
   const groundY = height - 80
   const rodHeight = 200
   const rodBottomY = groundY
   const rodBottomX = centerX
   const radius = 350 // 稍微增大半径，让太阳更高
-  const minAngle = 133 // 最小角度（太阳不会太低）
-  const maxAngle = 180 // 最大角度（太阳不会太高）
-  const centerY = groundY - 50 // 圆心Y坐标
+  const minAngle = 20 // 最小角度（太阳光线与地面夹角）
+  const maxAngle = 85 // 最大角度（太阳光线与地面夹角）
+  const centerY = groundY - rodHeight - 50 // 圆心Y坐标
 
-  // 计算太阳位置（限制在右半边）
-  const clampedAngle = Math.max(minAngle, Math.min(maxAngle, sunAngle))
-  const sunX = centerX + radius * Math.cos((clampedAngle - 90) * Math.PI / 180)
-  const sunY = centerY - radius * Math.sin((clampedAngle - 90) * Math.PI / 180)
-
-  // 计算阴影
+  // 杆子顶部坐标
   const rodTopX = rodBottomX
   const rodTopY = rodBottomY - rodHeight
 
-  // 阴影长度计算
-  const shadowLength = sunY > rodTopY
-    ? rodHeight / Math.tan(Math.acos((sunX - rodTopX) / Math.sqrt(Math.pow(sunX - rodTopX, 2) + Math.pow(sunY - rodTopY, 2))))
-    : -rodHeight / Math.tan(Math.acos((sunX - rodTopX) / Math.sqrt(Math.pow(sunX - rodTopX, 2) + Math.pow(sunY - rodTopY, 2))))
+  // 计算太阳位置（根据太阳光线与地面的夹角）
+  const clampedAngle = Math.max(minAngle, Math.min(maxAngle, sunAngle))
+  const sunX = rodTopX + radius * Math.cos(clampedAngle * Math.PI / 180)
+  const sunY = rodTopY - radius * Math.sin(clampedAngle * Math.PI / 180)
 
-  // 阴影末端X坐标
-  const shadowEndX = sunX > rodTopX
-    ? rodTopX + shadowLength
-    : rodTopX - Math.abs(shadowLength)
+  // 阴影长度 = 杆高 * cot(太阳光线与地面夹角)
+  const shadowLength = rodHeight / Math.tan(clampedAngle * Math.PI / 180)
+
+  // 阴影末端X坐标（阴影在杆子左边）
+  const shadowEndX = rodTopX - shadowLength
 
   // 获取当前节气
   const getCurrentSolarTerm = () => {
@@ -115,12 +111,12 @@ function App() {
 
     const coords = getSVGCoords(clientX, clientY)
 
-    // 计算角度（以圆心为中心）
-    const dx = coords.x - centerX
-    const dy = centerY - coords.y
-    let angle = Math.atan2(dy, dx) * 180 / Math.PI + 90
+    // 计算太阳光线与地面的夹角
+    const dx = coords.x - rodTopX
+    const dy = rodTopY - coords.y
+    let angle = Math.atan2(dy, dx) * 180 / Math.PI
 
-    // 限制太阳只能在右半边（角度范围30°到150°）
+    // 限制夹角范围
     if (angle < minAngle) angle = minAngle
     if (angle > maxAngle) angle = maxAngle
 
@@ -128,7 +124,7 @@ function App() {
     if (coords.y < groundY - 10) {
       setSunAngle(angle)
     }
-  }, [isDragging, centerX, centerY, groundY, minAngle, maxAngle, getSVGCoords])
+  }, [isDragging, rodTopX, rodTopY, groundY, minAngle, maxAngle, getSVGCoords])
 
   // 停止拖动
   const handleEnd = useCallback(() => {
@@ -228,8 +224,8 @@ function App() {
 
             {/* 太阳运动轨迹（圆） */}
             <circle
-              cx={centerX}
-              cy={centerY}
+              cx={rodTopX}
+              cy={rodTopY}
               r={radius}
               fill="none"
               stroke="rgba(255, 200, 100, 0.3)"
@@ -374,19 +370,39 @@ function App() {
 
             {/* 角度指示弧线 */}
             <path
-              d={`M ${centerX + 30} ${centerY} A 30 30 0 0 ${sunAngle > 180 ? 1 : 0} ${centerX + 30 * Math.cos((clampedAngle - 90) * Math.PI / 180)} ${centerY - 30 * Math.sin((clampedAngle - 90) * Math.PI / 180)}`}
+              d={`M ${rodTopX + 30} ${rodTopY} A 30 30 0 0 ${clampedAngle > 90 ? 1 : 0} ${rodTopX + 30 * Math.cos(clampedAngle * Math.PI / 180)} ${rodTopY - 30 * Math.sin(clampedAngle * Math.PI / 180)}`}
               fill="none"
               stroke="#FF6B6B"
               strokeWidth="3"
               strokeDasharray="4 2"
             />
 
+            {/* 太阳光线与地面夹角指示线 */}
+            <line
+              x1={rodTopX}
+              y1={rodTopY}
+              x2={rodTopX + 80}
+              y2={rodTopY}
+              stroke="#FF6B6B"
+              strokeWidth="2"
+              opacity="0.5"
+            />
+            <line
+              x1={rodTopX}
+              y1={rodTopY}
+              x2={rodTopX + 80 * Math.cos(clampedAngle * Math.PI / 180)}
+              y2={rodTopY - 80 * Math.sin(clampedAngle * Math.PI / 180)}
+              stroke="#FF6B6B"
+              strokeWidth="2"
+              opacity="0.8"
+            />
+
             {/* 角度标注 */}
             <text
-              x={centerX + 50}
-              y={centerY - 10}
+              x={rodTopX + 60}
+              y={rodTopY - 15}
               fill="#FF6B6B"
-              fontSize="16"
+              fontSize="18"
               fontWeight="bold"
             >
               {Math.round(clampedAngle)}°
