@@ -32,8 +32,23 @@ const solarTerms = [
 function App() {
   const [sunAngle, setSunAngle] = useState(85) // 初始角度（太阳光线与地面夹角）
   const [isDragging, setIsDragging] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [currentTermIndex, setCurrentTermIndex] = useState(12) // 默认夏至
   const svgRef = useRef<SVGSVGElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+
+  // 播放节气循环
+  useEffect(() => {
+    if (!isPlaying) return
+    const interval = setInterval(() => {
+      setCurrentTermIndex((prev) => {
+        const next = (prev + 1) % solarTerms.length
+        setSunAngle(solarTerms[next].angle)
+        return next
+      })
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [isPlaying])
 
   // 画布参数
   const width = 1400
@@ -68,6 +83,7 @@ function App() {
     let normalizedAngle = sunAngle % 360
     if (normalizedAngle < 0) normalizedAngle += 360
 
+    let closestIndex = 0
     let closest = solarTerms[0]
     let minDiff = Math.abs(solarTerms[0].angle - normalizedAngle)
 
@@ -82,13 +98,14 @@ function App() {
       }
       if (diff < minDiff) {
         minDiff = diff
+        closestIndex = i
         closest = solarTerms[i]
       }
     }
-    return closest
+    return { term: closest, index: closestIndex }
   }
 
-  const currentTerm = getCurrentSolarTerm()
+  const { term: currentTerm, index: currentIdx } = getCurrentSolarTerm()
   const sunAltitude = 90 - (sunAngle % 180)
 
   // 将鼠标/触摸坐标转换为SVG坐标
@@ -485,8 +502,52 @@ function App() {
           </div>
         </div>
 
-        {/* 二十四节气列表 */}
+        {/* 播放控制 */}
         <div className="bg-white rounded-2xl shadow-xl p-4 md:p-6">
+          <div className="flex items-center gap-4 mb-4">
+            <button
+              onClick={() => setIsPlaying(!isPlaying)}
+              className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${
+                isPlaying 
+                  ? 'bg-red-500 hover:bg-red-600 text-white shadow-lg' 
+                  : 'bg-amber-500 hover:bg-amber-600 text-white shadow-lg'
+              }`}
+            >
+              {isPlaying ? (
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+                </svg>
+              ) : (
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              )}
+            </button>
+
+            <div className="flex-1">
+              <div className="flex justify-between text-sm text-slate-600 mb-2">
+                <span>{solarTerms[0].name}</span>
+                <span className="font-medium text-amber-600">
+                  {currentTerm.name} ({currentTerm.angle}°)
+                </span>
+                <span>{solarTerms[solarTerms.length - 1].name}</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max={solarTerms.length - 1}
+                value={currentIdx}
+                onChange={(e) => {
+                  const idx = parseInt(e.target.value)
+                  setCurrentTermIndex(idx)
+                  setSunAngle(solarTerms[idx].angle)
+                  setIsPlaying(false)
+                }}
+                className="w-full h-2 bg-gradient-to-r from-blue-300 via-amber-300 to-red-300 rounded-lg appearance-none cursor-pointer accent-amber-500"
+              />
+            </div>
+          </div>
+
           <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
             <span className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center">
               <svg className="w-5 h-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
