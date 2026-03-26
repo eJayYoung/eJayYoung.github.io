@@ -33,7 +33,7 @@ function App() {
   const rodBottomY = groundY
   const rodBottomX = centerX
   const radius = 350 // 稍微增大半径，让太阳更高
-  const minAngle = 126 // 最小角度（太阳不会太低）
+  const minAngle = 133 // 最小角度（太阳不会太低）
   const maxAngle = 180 // 最大角度（太阳不会太高）
   const centerY = groundY - 50 // 圆心Y坐标
 
