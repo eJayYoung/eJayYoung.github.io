@@ -160,6 +160,18 @@ function App() {
     }
     
     setSunAngle(angle)
+    
+    // 找到对应的节气索引并更新
+    let closestIndex = 0
+    let minDiff = Math.abs(solarTerms[0].angle - angle)
+    for (let i = 1; i < solarTerms.length; i++) {
+      const diff = Math.abs(solarTerms[i].angle - angle)
+      if (diff < minDiff) {
+        minDiff = diff
+        closestIndex = i
+      }
+    }
+    setCurrentTermIndex(closestIndex)
   }, [isDragging, rodTopX, rodTopY, minAngle, maxAngle, getSVGCoords])
 
   // 停止拖动
