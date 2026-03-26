@@ -479,7 +479,7 @@ function App() {
         </div>
 
         {/* 数据展示区域 */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           {/* 当前节气 */}
           <div className="bg-gradient-to-br from-amber-100 to-orange-200 rounded-xl p-5 shadow-lg">
             <div className="text-sm text-amber-700 mb-1">当前节气</div>
