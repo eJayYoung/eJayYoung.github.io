@@ -2,16 +2,12 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 permissions:
   contents: read
   pages: write
   id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
 
 jobs:
   build:
@@ -24,32 +20,27 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install
+        run: npm ci
 
       - name: Build
-        run: npm run build
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
+        run: |
+          rm -rf dist   # 👈 强制清理
+          npm run build
+          ls -la dist   # 👈 打印确认
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist   # 👈 关键
+          path: ./dist   # 👈 明确路径
 
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
     needs: build
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy to Pages
-        id: deployment
+      - name: Deploy
         uses: actions/deploy-pages@v4
