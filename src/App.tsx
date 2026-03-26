@@ -79,24 +79,16 @@ function App() {
   // 阴影末端X坐标（阴影在杆子左边）
   const shadowEndX = rodTopX - shadowLength
 
-  // 获取当前节气
+  // 获取当前节气 - 直接根据角度找最近节气
   const getCurrentSolarTerm = () => {
-    let normalizedAngle = sunAngle % 360
-    if (normalizedAngle < 0) normalizedAngle += 360
-
+    const angle = sunAngle
+    
     let closestIndex = 0
     let closest = solarTerms[0]
-    let minDiff = Math.abs(solarTerms[0].angle - normalizedAngle)
+    let minDiff = Math.abs(solarTerms[0].angle - angle)
 
     for (let i = 1; i < solarTerms.length; i++) {
-      let diff = Math.abs(solarTerms[i].angle - normalizedAngle)
-      if (normalizedAngle > 340 || normalizedAngle < 20) {
-        const altDiff = Math.min(
-          Math.abs(solarTerms[i].angle - normalizedAngle - 360),
-          Math.abs(solarTerms[i].angle - normalizedAngle + 360)
-        )
-        diff = Math.min(diff, altDiff)
-      }
+      const diff = Math.abs(solarTerms[i].angle - angle)
       if (diff < minDiff) {
         minDiff = diff
         closestIndex = i
@@ -109,9 +101,9 @@ function App() {
   const { term: currentTerm, index: currentIdx } = getCurrentSolarTerm()
   const displayedAngle = sunAngle // sunAngle 就是太阳与地面夹角
 
-  // 使用 currentTermIndex 而不是 currentIdx，避免角度相同时出现问题
-  const displayIndex = isPlaying ? currentTermIndex : currentIdx
-  const displayTerm = isPlaying ? solarTerms[currentTermIndex] : currentTerm
+  // 始终使用 currentTermIndex 来显示，确保拖动时进度条同步
+  const displayIndex = currentTermIndex
+  const displayTerm = solarTerms[currentTermIndex]
 
   // 将鼠标/触摸坐标转换为SVG坐标
   const getSVGCoords = useCallback((clientX: number, clientY: number) => {
