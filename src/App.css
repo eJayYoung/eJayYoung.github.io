@@ -1,0 +1,99 @@
+/* 土圭测影演示样式 */
+:root {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(to bottom, #e0f4ff, #fef3c7);
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* 动画效果 */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* 响应式布局 */
+@media (max-width: 640px) {
+  .grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .text-3xl {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+  }
+
+  .p-5 {
+    padding: 1rem;
+  }
+}
+
+/* 交互反馈 */
+.cursor-grab {
+  cursor: grab;
+}
+
+.cursor-grab:active {
+  cursor: grabbing;
+}
+
+/* 阴影效果 */
+.shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.shadow-xl {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* 渐变背景 */
+.bg-gradient-to-br {
+  background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+}
+
+.bg-gradient-to-b {
+  background-image: linear-gradient(to bottom, var(--tw-gradient-stops));
+}
+
+/* 卡片悬停效果 */
+.grid > div:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
+}
+
+/* SVG文字 */
+text {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* 触控优化 */
+@media (hover: none) {
+  .cursor-grab {
+    cursor: pointer;
+  }
+
+  .cursor-grab:active {
+    cursor: pointer;
+  }
+}
