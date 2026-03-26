@@ -1,36 +1,36 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import './App.css'
 
-// 二十四节气数据（太阳与地面的夹角 = 90° - 正午太阳高度角）
+// 二十四节气数据（太阳与地面的夹角，即正午太阳高度角）
 const solarTerms = [
-  { name: '夏至', angle: 6.5, shadowLength: 0.4 },
-  { name: '小暑', angle: 10.7, shadowLength: 0.46 },
-  { name: '大暑', angle: 13.4, shadowLength: 0.54 },
-  { name: '立秋', angle: 17.1, shadowLength: 0.66 },
-  { name: '处暑', angle: 21.5, shadowLength: 0.78 },
-  { name: '白露', angle: 26.1, shadowLength: 0.9 },
-  { name: '秋分', angle: 30, shadowLength: 1.02 },
-  { name: '寒露', angle: 33.8, shadowLength: 1.16 },
-  { name: '霜降', angle: 38.7, shadowLength: 1.3 },
-  { name: '立冬', angle: 43.5, shadowLength: 1.4 },
-  { name: '小雪', angle: 48.1, shadowLength: 1.48 },
-  { name: '大雪', angle: 51.4, shadowLength: 1.5 },
-  { name: '冬至', angle: 53.5, shadowLength: 1.5 },
-  { name: '小寒', angle: 51.4, shadowLength: 1.46 },
-  { name: '大寒', angle: 48.1, shadowLength: 1.42 },
-  { name: '立春', angle: 43.5, shadowLength: 1.36 },
-  { name: '雨水', angle: 38.7, shadowLength: 1.28 },
-  { name: '惊蛰', angle: 33.8, shadowLength: 1.2 },
-  { name: '春分', angle: 30, shadowLength: 1.1 },
-  { name: '清明', angle: 26.1, shadowLength: 0.98 },
-  { name: '谷雨', angle: 21.5, shadowLength: 0.86 },
-  { name: '立夏', angle: 17.1, shadowLength: 0.74 },
-  { name: '小满', angle: 13.4, shadowLength: 0.62 },
-  { name: '芒种', angle: 10.7, shadowLength: 0.5 },
+  { name: '夏至', angle: 83.5, shadowLength: 0.4 },
+  { name: '小暑', angle: 79.3, shadowLength: 0.46 },
+  { name: '大暑', angle: 76.6, shadowLength: 0.54 },
+  { name: '立秋', angle: 72.9, shadowLength: 0.66 },
+  { name: '处暑', angle: 68.5, shadowLength: 0.78 },
+  { name: '白露', angle: 63.9, shadowLength: 0.9 },
+  { name: '秋分', angle: 60, shadowLength: 1.02 },
+  { name: '寒露', angle: 56.2, shadowLength: 1.16 },
+  { name: '霜降', angle: 51.3, shadowLength: 1.3 },
+  { name: '立冬', angle: 46.5, shadowLength: 1.4 },
+  { name: '小雪', angle: 41.9, shadowLength: 1.48 },
+  { name: '大雪', angle: 38.6, shadowLength: 1.5 },
+  { name: '冬至', angle: 36.5, shadowLength: 1.5 },
+  { name: '小寒', angle: 38.6, shadowLength: 1.46 },
+  { name: '大寒', angle: 41.9, shadowLength: 1.42 },
+  { name: '立春', angle: 46.5, shadowLength: 1.36 },
+  { name: '雨水', angle: 51.3, shadowLength: 1.28 },
+  { name: '惊蛰', angle: 56.2, shadowLength: 1.2 },
+  { name: '春分', angle: 60, shadowLength: 1.1 },
+  { name: '清明', angle: 63.9, shadowLength: 0.98 },
+  { name: '谷雨', angle: 68.5, shadowLength: 0.86 },
+  { name: '立夏', angle: 72.9, shadowLength: 0.74 },
+  { name: '小满', angle: 76.6, shadowLength: 0.62 },
+  { name: '芒种', angle: 79.3, shadowLength: 0.5 },
 ]
 
 function App() {
-  const [sunAngle, setSunAngle] = useState(6.5) // 初始角度（太阳与地面夹角）
+  const [sunAngle, setSunAngle] = useState(83.5) // 初始角度（太阳与地面夹角）
   const [isDragging, setIsDragging] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTermIndex, setCurrentTermIndex] = useState(0) // 默认夏至（index=0）
@@ -59,8 +59,8 @@ function App() {
   const rodBottomY = groundY
   const rodBottomX = centerX
   const radius = 350 // 稍微增大半径，让太阳更高
-  const minAngle = 6.5 // 太阳与地面夹角最小（夏至）
-  const maxAngle = 53.5 // 太阳与地面夹角最大（冬至）
+  const minAngle = 36.5 // 太阳与地面夹角最小（冬至）
+  const maxAngle = 83.5 // 太阳与地面夹角最大（夏至）
   const centerY = groundY - rodHeight - 50 // 圆心Y坐标
 
   // 杆子顶部坐标
