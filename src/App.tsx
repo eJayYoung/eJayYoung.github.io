@@ -53,9 +53,9 @@ function App() {
   // 画布参数
   const width = 1600
   const height = 800
-  const centerX = width / 2 + 100 // 圆心更靠右
+  const centerX = width / 2 + 200 // 圆心更靠右
   const groundY = height - 80
-  const rodHeight = 150
+  const rodHeight = 100
   const rodBottomY = groundY
   const rodBottomX = centerX
   const radius = 350 // 稍微增大半径，让太阳更高
@@ -108,6 +108,10 @@ function App() {
 
   const { term: currentTerm, index: currentIdx } = getCurrentSolarTerm()
   const displayedAngle = sunAngle // sunAngle 就是正午太阳高度角
+
+  // 使用 currentTermIndex 而不是 currentIdx，避免角度相同时出现问题
+  const displayIndex = isPlaying ? currentTermIndex : currentIdx
+  const displayTerm = isPlaying ? solarTerms[currentTermIndex] : currentTerm
 
   // 将鼠标/触摸坐标转换为SVG坐标
   const getSVGCoords = useCallback((clientX: number, clientY: number) => {
@@ -475,7 +479,7 @@ function App() {
           {/* 当前节气 */}
           <div className="bg-gradient-to-br from-amber-100 to-orange-200 rounded-xl p-5 shadow-lg">
             <div className="text-sm text-amber-700 mb-1">当前节气</div>
-            <div className="text-3xl font-bold text-amber-900">{currentTerm.name}</div>
+            <div className="text-3xl font-bold text-amber-900">{displayTerm.name}</div>
             <div className="text-sm text-amber-600 mt-1">
               正午太阳高度角：{displayedAngle.toFixed(1)}°
             </div>
@@ -485,11 +489,11 @@ function App() {
           <div className="bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl p-5 shadow-lg">
             <div className="text-sm text-slate-600 mb-1">影长数据</div>
             <div className="text-3xl font-bold text-slate-800">
-              {currentTerm.shadowLength.toFixed(2)} <span className="text-lg">尺</span>
-              <span className="text-lg text-slate-500 ml-2">（{(currentTerm.shadowLength * 0.33).toFixed(2)} 米）</span>
+              {displayTerm.shadowLength.toFixed(2)} <span className="text-lg">尺</span>
+              <span className="text-lg text-slate-500 ml-2">（{(displayTerm.shadowLength * 0.33).toFixed(2)} 米）</span>
             </div>
             <div className="text-sm text-slate-500 mt-1">
-              相对影长：{(currentTerm.shadowLength * 100).toFixed(1)}%
+              相对影长：{(displayTerm.shadowLength * 100).toFixed(1)}%
             </div>
           </div>
 
@@ -533,7 +537,7 @@ function App() {
               <div className="flex justify-between text-sm text-slate-600 mb-2">
                 <span>{solarTerms[0].name}</span>
                 <span className="font-medium text-amber-600">
-                  {currentTerm.name} ({currentTerm.angle}°)
+                  {displayTerm.name} ({displayTerm.angle}°)
                 </span>
                 <span>{solarTerms[solarTerms.length - 1].name}</span>
               </div>
@@ -541,7 +545,7 @@ function App() {
                 type="range"
                 min="0"
                 max={solarTerms.length - 1}
-                value={currentIdx}
+                value={displayIndex}
                 onChange={(e) => {
                   const idx = parseInt(e.target.value)
                   setCurrentTermIndex(idx)
@@ -563,7 +567,7 @@ function App() {
           </h2>
           <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12 gap-2">
             {solarTerms.map((term, index) => {
-              const isActive = term.name === currentTerm.name
+              const isActive = term.name === displayTerm.name
               const isSummer = ['小满', '芒种', '夏至', '小暑', '大暑'].includes(term.name)
               const isWinter = ['小雪', '大雪', '冬至', '小寒', '大寒'].includes(term.name)
 
