@@ -153,8 +153,8 @@ function App() {
     if (angle < minAngle) angle = minAngle
     if (angle > maxAngle) angle = maxAngle
 
-    // 限制太阳在地面以上
-    if (coords.y < groundY - 10) {
+    // 限制太阳在地面以上（但允许拖到更高位置）
+    if (coords.y < groundY + 50) {
       setSunAngle(angle)
     }
   }, [isDragging, rodTopX, rodTopY, groundY, minAngle, maxAngle, getSVGCoords])
