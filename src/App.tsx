@@ -1,39 +1,39 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import './App.css'
 
-// 二十四节气数据（正午太阳高度角）
+// 二十四节气数据（太阳与地面的夹角 = 90° - 正午太阳高度角）
 const solarTerms = [
-  { name: '冬至', angle: 36.5, shadowLength: 1.5 },
-  { name: '小寒', angle: 38.6, shadowLength: 1.46 },
-  { name: '大寒', angle: 41.9, shadowLength: 1.42 },
-  { name: '立春', angle: 46.5, shadowLength: 1.36 },
-  { name: '雨水', angle: 51.3, shadowLength: 1.28 },
-  { name: '惊蛰', angle: 56.2, shadowLength: 1.2 },
-  { name: '春分', angle: 60, shadowLength: 1.1 },
-  { name: '清明', angle: 63.9, shadowLength: 0.98 },
-  { name: '谷雨', angle: 68.5, shadowLength: 0.86 },
-  { name: '立夏', angle: 72.9, shadowLength: 0.74 },
-  { name: '小满', angle: 76.6, shadowLength: 0.62 },
-  { name: '芒种', angle: 79.3, shadowLength: 0.5 },
-  { name: '夏至', angle: 83.5, shadowLength: 0.4 },
-  { name: '小暑', angle: 79.3, shadowLength: 0.46 },
-  { name: '大暑', angle: 76.6, shadowLength: 0.54 },
-  { name: '立秋', angle: 72.9, shadowLength: 0.66 },
-  { name: '处暑', angle: 68.5, shadowLength: 0.78 },
-  { name: '白露', angle: 63.9, shadowLength: 0.9 },
-  { name: '秋分', angle: 60, shadowLength: 1.02 },
-  { name: '寒露', angle: 56.2, shadowLength: 1.16 },
-  { name: '霜降', angle: 51.3, shadowLength: 1.3 },
-  { name: '立冬', angle: 46.5, shadowLength: 1.4 },
-  { name: '小雪', angle: 41.9, shadowLength: 1.48 },
-  { name: '大雪', angle: 38.6, shadowLength: 1.5 },
+  { name: '夏至', angle: 6.5, shadowLength: 0.4 },
+  { name: '小暑', angle: 10.7, shadowLength: 0.46 },
+  { name: '大暑', angle: 13.4, shadowLength: 0.54 },
+  { name: '立秋', angle: 17.1, shadowLength: 0.66 },
+  { name: '处暑', angle: 21.5, shadowLength: 0.78 },
+  { name: '白露', angle: 26.1, shadowLength: 0.9 },
+  { name: '秋分', angle: 30, shadowLength: 1.02 },
+  { name: '寒露', angle: 33.8, shadowLength: 1.16 },
+  { name: '霜降', angle: 38.7, shadowLength: 1.3 },
+  { name: '立冬', angle: 43.5, shadowLength: 1.4 },
+  { name: '小雪', angle: 48.1, shadowLength: 1.48 },
+  { name: '大雪', angle: 51.4, shadowLength: 1.5 },
+  { name: '冬至', angle: 53.5, shadowLength: 1.5 },
+  { name: '小寒', angle: 51.4, shadowLength: 1.46 },
+  { name: '大寒', angle: 48.1, shadowLength: 1.42 },
+  { name: '立春', angle: 43.5, shadowLength: 1.36 },
+  { name: '雨水', angle: 38.7, shadowLength: 1.28 },
+  { name: '惊蛰', angle: 33.8, shadowLength: 1.2 },
+  { name: '春分', angle: 30, shadowLength: 1.1 },
+  { name: '清明', angle: 26.1, shadowLength: 0.98 },
+  { name: '谷雨', angle: 21.5, shadowLength: 0.86 },
+  { name: '立夏', angle: 17.1, shadowLength: 0.74 },
+  { name: '小满', angle: 13.4, shadowLength: 0.62 },
+  { name: '芒种', angle: 10.7, shadowLength: 0.5 },
 ]
 
 function App() {
-  const [sunAngle, setSunAngle] = useState(83.5) // 初始角度（正午太阳高度角）
+  const [sunAngle, setSunAngle] = useState(6.5) // 初始角度（太阳与地面夹角）
   const [isDragging, setIsDragging] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
-  const [currentTermIndex, setCurrentTermIndex] = useState(12) // 默认夏至（index=12）
+  const [currentTermIndex, setCurrentTermIndex] = useState(0) // 默认夏至（index=0）
   const svgRef = useRef<SVGSVGElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -59,22 +59,21 @@ function App() {
   const rodBottomY = groundY
   const rodBottomX = centerX
   const radius = 350 // 稍微增大半径，让太阳更高
-  const minAngle = 36.5 // 正午太阳高度角最小（冬至）
-  const maxAngle = 83.5 // 正午太阳高度角最大（夏至）
+  const minAngle = 6.5 // 太阳与地面夹角最小（夏至）
+  const maxAngle = 53.5 // 太阳与地面夹角最大（冬至）
   const centerY = groundY - rodHeight - 50 // 圆心Y坐标
 
   // 杆子顶部坐标
   const rodTopX = rodBottomX
   const rodTopY = rodBottomY - rodHeight
 
-  // 计算太阳位置（正午太阳高度角 = 90° - 太阳光线与地面夹角）
+  // 计算太阳位置（太阳与地面夹角）
   const clampedAngle = Math.max(minAngle, Math.min(maxAngle, sunAngle))
-  const angleWithGround = 90 - clampedAngle
-  const sunX = rodTopX + radius * Math.cos(angleWithGround * Math.PI / 180)
-  const sunY = rodTopY - radius * Math.sin(angleWithGround * Math.PI / 180)
+  const sunX = rodTopX + radius * Math.cos(clampedAngle * Math.PI / 180)
+  const sunY = rodTopY - radius * Math.sin(clampedAngle * Math.PI / 180)
 
-  // 阴影长度 = 杆高 * cot(太阳光线与地面夹角)
-  const shadowLength = rodHeight / Math.tan(angleWithGround * Math.PI / 180)
+  // 阴影长度 = 杆高 * cot(太阳与地面夹角)
+  const shadowLength = rodHeight / Math.tan(clampedAngle * Math.PI / 180)
 
   // 阴影末端X坐标（阴影在杆子左边）
   const shadowEndX = rodTopX - shadowLength
@@ -107,7 +106,7 @@ function App() {
   }
 
   const { term: currentTerm, index: currentIdx } = getCurrentSolarTerm()
-  const displayedAngle = sunAngle // sunAngle 就是正午太阳高度角
+  const displayedAngle = sunAngle // sunAngle 就是太阳与地面夹角
 
   // 使用 currentTermIndex 而不是 currentIdx，避免角度相同时出现问题
   const displayIndex = isPlaying ? currentTermIndex : currentIdx
@@ -144,21 +143,18 @@ function App() {
 
     const coords = getSVGCoords(clientX, clientY)
 
-    // 计算太阳光线与地面的夹角
+    // 计算太阳与地面的夹角
     const dx = coords.x - rodTopX
     const dy = rodTopY - coords.y
-    let angleWithGround = Math.atan2(dy, dx) * 180 / Math.PI
+    let angle = Math.atan2(dy, dx) * 180 / Math.PI
 
     // 限制夹角范围
-    if (angleWithGround < (90 - maxAngle)) angleWithGround = 90 - maxAngle
-    if (angleWithGround > (90 - minAngle)) angleWithGround = 90 - minAngle
-
-    // 转换为正午太阳高度角 = 90 - 夹角
-    const sunAltitudeAngle = 90 - angleWithGround
+    if (angle < minAngle) angle = minAngle
+    if (angle > maxAngle) angle = maxAngle
 
     // 限制太阳在地面以上
     if (coords.y < groundY - 10) {
-      setSunAngle(sunAltitudeAngle)
+      setSunAngle(angle)
     }
   }, [isDragging, rodTopX, rodTopY, groundY, minAngle, maxAngle, getSVGCoords])
 
@@ -406,7 +402,7 @@ function App() {
 
             {/* 角度指示弧线 */}
             <path
-              d={`M ${rodTopX + 30} ${rodTopY} A 30 30 0 0 ${angleWithGround > 90 ? 1 : 0} ${rodTopX + 30 * Math.cos(angleWithGround * Math.PI / 180)} ${rodTopY - 30 * Math.sin(angleWithGround * Math.PI / 180)}`}
+              d={`M ${rodTopX + 30} ${rodTopY} A 30 30 0 0 ${clampedAngle > 90 ? 1 : 0} ${rodTopX + 30 * Math.cos(clampedAngle * Math.PI / 180)} ${rodTopY - 30 * Math.sin(clampedAngle * Math.PI / 180)}`}
               fill="none"
               stroke="#FF6B6B"
               strokeWidth="3"
@@ -426,8 +422,8 @@ function App() {
             <line
               x1={rodTopX}
               y1={rodTopY}
-              x2={rodTopX + 80 * Math.cos(angleWithGround * Math.PI / 180)}
-              y2={rodTopY - 80 * Math.sin(angleWithGround * Math.PI / 180)}
+              x2={rodTopX + 80 * Math.cos(clampedAngle * Math.PI / 180)}
+              y2={rodTopY - 80 * Math.sin(clampedAngle * Math.PI / 180)}
               stroke="#FF6B6B"
               strokeWidth="2"
               opacity="0.8"
@@ -441,7 +437,7 @@ function App() {
               fontSize="18"
               fontWeight="bold"
             >
-              {Math.round(angleWithGround)}°
+              {Math.round(clampedAngle)}°
             </text>
 
             {/* 地面标注线 */}
@@ -481,7 +477,7 @@ function App() {
             <div className="text-sm text-amber-700 mb-1">当前节气</div>
             <div className="text-3xl font-bold text-amber-900">{displayTerm.name}</div>
             <div className="text-sm text-amber-600 mt-1">
-              正午太阳高度角：{displayedAngle.toFixed(1)}°
+              太阳与地面夹角：{displayedAngle.toFixed(1)}°
             </div>
           </div>
 
@@ -497,18 +493,6 @@ function App() {
             </div>
           </div>
 
-          {/* 太阳位置 */}
-          <div className="bg-gradient-to-br from-yellow-100 to-amber-100 rounded-xl p-5 shadow-lg">
-            <div className="text-sm text-yellow-700 mb-1">太阳位置</div>
-            <div className="text-3xl font-bold text-yellow-900">
-              {Math.round(sunAngle % 360)}°
-            </div>
-            <div className="text-sm text-yellow-600 mt-1">
-              {sunAngle >= 0 && sunAngle < 90 ? '东北方向' :
-               sunAngle >= 90 && sunAngle < 180 ? '东南方向' :
-               sunAngle >= 180 && sunAngle < 270 ? '西南方向' : '西北方向'}
-            </div>
-          </div>
         </div>
 
         {/* 播放控制 */}
