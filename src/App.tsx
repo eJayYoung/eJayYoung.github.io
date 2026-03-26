@@ -144,20 +144,23 @@ function App() {
 
     const coords = getSVGCoords(clientX, clientY)
 
-    // 计算太阳与地面的夹角
+    // 计算太阳与地面的夹角（直接用角度计算，不依赖 atan2）
     const dx = coords.x - rodTopX
     const dy = rodTopY - coords.y
+    
+    // 只允许在右侧拖动（x > rodTopX）
+    if (dx <= 0) return
+    
     let angle = Math.atan2(dy, dx) * 180 / Math.PI
-
-    // 限制夹角范围
-    if (angle < minAngle) angle = minAngle
-    if (angle > maxAngle) angle = maxAngle
-
-    // 限制太阳在地面以上（但允许拖到更高位置）
-    if (coords.y < groundY + 50) {
-      setSunAngle(angle)
+    
+    // 限制夹角范围（只在有效范围内更新）
+    if (angle < minAngle || angle > maxAngle) {
+      // 如果超出范围，限制到边界
+      angle = Math.max(minAngle, Math.min(maxAngle, angle))
     }
-  }, [isDragging, rodTopX, rodTopY, groundY, minAngle, maxAngle, getSVGCoords])
+    
+    setSunAngle(angle)
+  }, [isDragging, rodTopX, rodTopY, minAngle, maxAngle, getSVGCoords])
 
   // 停止拖动
   const handleEnd = useCallback(() => {
