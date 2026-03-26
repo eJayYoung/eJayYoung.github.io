@@ -2,31 +2,32 @@ import { useState, useRef, useCallback, useEffect } from 'react'
 import './App.css'
 
 // 二十四节气数据（太阳与地面的夹角，即正午太阳高度角）
+// 影长计算公式：影长 = 杆高 × cot(太阳与地面夹角)，杆高为2米
 const solarTerms = [
-  { name: '夏至', angle: 83.5, shadowLength: 0.4 },
-  { name: '小暑', angle: 79.3, shadowLength: 0.46 },
-  { name: '大暑', angle: 76.6, shadowLength: 0.54 },
-  { name: '立秋', angle: 72.9, shadowLength: 0.66 },
-  { name: '处暑', angle: 68.5, shadowLength: 0.78 },
-  { name: '白露', angle: 63.9, shadowLength: 0.9 },
-  { name: '秋分', angle: 60, shadowLength: 1.02 },
-  { name: '寒露', angle: 56.2, shadowLength: 1.16 },
-  { name: '霜降', angle: 51.3, shadowLength: 1.3 },
-  { name: '立冬', angle: 46.5, shadowLength: 1.4 },
-  { name: '小雪', angle: 41.9, shadowLength: 1.48 },
-  { name: '大雪', angle: 38.6, shadowLength: 1.5 },
-  { name: '冬至', angle: 36.5, shadowLength: 1.5 },
-  { name: '小寒', angle: 38.6, shadowLength: 1.46 },
-  { name: '大寒', angle: 41.9, shadowLength: 1.42 },
-  { name: '立春', angle: 46.5, shadowLength: 1.36 },
-  { name: '雨水', angle: 51.3, shadowLength: 1.28 },
-  { name: '惊蛰', angle: 56.2, shadowLength: 1.2 },
-  { name: '春分', angle: 60, shadowLength: 1.1 },
-  { name: '清明', angle: 63.9, shadowLength: 0.98 },
-  { name: '谷雨', angle: 68.5, shadowLength: 0.86 },
-  { name: '立夏', angle: 72.9, shadowLength: 0.74 },
-  { name: '小满', angle: 76.6, shadowLength: 0.62 },
-  { name: '芒种', angle: 79.3, shadowLength: 0.5 },
+  { name: '夏至', angle: 83.5, shadowLength: 0.23 },
+  { name: '小暑', angle: 79.3, shadowLength: 0.38 },
+  { name: '大暑', angle: 76.6, shadowLength: 0.47 },
+  { name: '立秋', angle: 72.9, shadowLength: 0.64 },
+  { name: '处暑', angle: 68.5, shadowLength: 0.8 },
+  { name: '白露', angle: 63.9, shadowLength: 1.0 },
+  { name: '秋分', angle: 60, shadowLength: 1.15 },
+  { name: '寒露', angle: 56.2, shadowLength: 1.34 },
+  { name: '霜降', angle: 51.3, shadowLength: 1.6 },
+  { name: '立冬', angle: 46.5, shadowLength: 1.9 },
+  { name: '小雪', angle: 41.9, shadowLength: 2.2 },
+  { name: '大雪', angle: 38.6, shadowLength: 2.5 },
+  { name: '冬至', angle: 36.5, shadowLength: 2.7 },
+  { name: '小寒', angle: 38.6, shadowLength: 2.5 },
+  { name: '大寒', angle: 41.9, shadowLength: 2.2 },
+  { name: '立春', angle: 46.5, shadowLength: 1.9 },
+  { name: '雨水', angle: 51.3, shadowLength: 1.6 },
+  { name: '惊蛰', angle: 56.2, shadowLength: 1.34 },
+  { name: '春分', angle: 60, shadowLength: 1.15 },
+  { name: '清明', angle: 63.9, shadowLength: 1.0 },
+  { name: '谷雨', angle: 68.5, shadowLength: 0.8 },
+  { name: '立夏', angle: 72.9, shadowLength: 0.64 },
+  { name: '小满', angle: 76.6, shadowLength: 0.47 },
+  { name: '芒种', angle: 79.3, shadowLength: 0.38 },
 ]
 
 function App() {
@@ -51,11 +52,11 @@ function App() {
   }, [isPlaying])
 
   // 画布参数
-  const width = 1600
+  const width = 1200
   const height = 800
-  const centerX = width / 2 + 200 // 圆心更靠右
+  const centerX = width / 2 // 圆心更靠右
   const groundY = height - 80
-  const rodHeight = 100
+  const rodHeight = 200 // 杆高2米
   const rodBottomY = groundY
   const rodBottomX = centerX
   const radius = 350 // 稍微增大半径，让太阳更高
@@ -483,13 +484,12 @@ function App() {
 
           {/* 影长数据 */}
           <div className="bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl p-5 shadow-lg">
-            <div className="text-sm text-slate-600 mb-1">影长数据</div>
+            <div className="text-sm text-slate-600 mb-1">影长数据（杆高2米）</div>
             <div className="text-3xl font-bold text-slate-800">
-              {displayTerm.shadowLength.toFixed(2)} <span className="text-lg">尺</span>
-              <span className="text-lg text-slate-500 ml-2">（{(displayTerm.shadowLength * 0.33).toFixed(2)} 米）</span>
+              {displayTerm.shadowLength.toFixed(2)} <span className="text-lg">米</span>
             </div>
             <div className="text-sm text-slate-500 mt-1">
-              相对影长：{(displayTerm.shadowLength * 100).toFixed(1)}%
+              相对影长：{(displayTerm.shadowLength / 2 * 100).toFixed(1)}%
             </div>
           </div>
 
