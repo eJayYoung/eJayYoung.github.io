@@ -462,6 +462,9 @@ function App() {
             <text x="20" y={groundY - 15} fill="#FFF" fontSize="16" fontWeight="bold">地面</text>
             <text x={rodTopX + 20} y={rodTopY - 20} fill="#4A3728" fontSize="16" fontWeight="bold">立表</text>
 
+            {/* 地理位置信息 */}
+            <text x={width - 20} y={30} fill="#666" fontSize="14" textAnchor="end">杭州市（北纬约30.2°）</text>
+
             {/* 拖动提示 */}
             <g opacity={isDragging ? 0 : 0.8}>
               <text
