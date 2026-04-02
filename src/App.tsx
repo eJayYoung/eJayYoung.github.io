@@ -53,13 +53,13 @@ function App() {
 
   // 画布参数
   const width = 1200
-  const height = 800
+  const height = 650
   const centerX = width / 2 // 圆心更靠右
   const groundY = height - 80
   const rodHeight = 200 // 杆高2米
   const rodBottomY = groundY
   const rodBottomX = centerX
-  const radius = 350 // 稍微增大半径，让太阳更高
+  const radius = 250 // 稍微增大半径，让太阳更高
   const minAngle = 36.5 // 太阳与地面夹角最小（冬至）
   const maxAngle = 83.5 // 太阳与地面夹角最大（夏至）
   const centerY = groundY - rodHeight - 50 // 圆心Y坐标
@@ -219,9 +219,8 @@ function App() {
             拖动太阳观察影长变化，探索古代天文智慧
           </p>
         </header>
-
         {/* 主演示区域 */}
-        <div ref={containerRef} className="bg-white rounded-2xl shadow-xl p-4 md:p-6 mb-6">
+        <div ref={containerRef} className="bg-white rounded-2xl shadow-xl p-4 md:p-6 mb-6 flex-1">
           <svg
             ref={svgRef}
             width="100%"
@@ -463,7 +462,16 @@ function App() {
             <text x={rodTopX + 20} y={rodTopY - 20} fill="#4A3728" fontSize="16" fontWeight="bold">立表</text>
 
             {/* 地理位置信息 */}
-            <text x={width - 20} y={30} fill="#666" fontSize="14" textAnchor="end">杭州市（北纬约30.2°）</text>
+            <text x={width - 20} y={30} fill="#888" fontSize="14" textAnchor="end">杭州市（北纬约30.2°）</text>
+            {/* 当前节气 */}
+            <text x={width - 20} y={50} fill="#D97706" fontSize="14" fontWeight="bold" textAnchor="end">当前节气: {displayTerm.name}</text>
+            {/* 太阳与地面夹角 */}
+            <text x={width - 20} y={70} fill="#2563EB" fontSize="14" fontWeight="bold" textAnchor="end">太阳夹角: {displayedAngle.toFixed(1)}°</text>
+            {/* 影长数据 */}
+            <text x={width - 20} y={90} fill="#DC2626" fontSize="14" fontWeight="bold" textAnchor="end">影长: {displayTerm.shadowLength.toFixed(2)} 米</text>
+            {/* 相对影长 */}
+            <text x={width - 20} y={110} fill="#059669" fontSize="14" fontWeight="bold" textAnchor="end">相对影长: {(displayTerm.shadowLength / 2 * 100).toFixed(1)}%</text>
+
 
             {/* 拖动提示 */}
             <g opacity={isDragging ? 0 : 0.8}>
@@ -482,7 +490,7 @@ function App() {
         </div>
 
         {/* 数据展示区域 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 hidden">
           {/* 当前节气 */}
           <div className="bg-gradient-to-br from-amber-100 to-orange-200 rounded-xl p-5 shadow-lg">
             <div className="text-sm text-amber-700 mb-1">当前节气</div>
