@@ -183,13 +183,13 @@ function App() {
 
   // 触摸事件
   const handleTouchStart = useCallback((e: React.TouchEvent<SVGSVGElement>) => {
-    e.preventDefault()
+    // preventDefault 由全局 touchmove 监听器处理
     const touch = e.touches[0]
     handleStart(touch.clientX, touch.clientY)
   }, [handleStart])
 
   const handleTouchMove = useCallback((e: React.TouchEvent<SVGSVGElement>) => {
-    e.preventDefault()
+    // preventDefault 由全局 touchmove 监听器处理
     const touch = e.touches[0]
     handleMove(touch.clientX, touch.clientY)
   }, [handleMove])
@@ -197,15 +197,23 @@ function App() {
   useEffect(() => {
     const handleGlobalMouseUp = () => setIsDragging(false)
     const handleGlobalTouchEnd = () => setIsDragging(false)
+    const handleGlobalTouchMove = (e: TouchEvent) => {
+      if (isDragging && e.touches.length > 0) {
+        e.preventDefault()
+        handleMove(e.touches[0].clientX, e.touches[0].clientY)
+      }
+    }
 
     window.addEventListener('mouseup', handleGlobalMouseUp)
     window.addEventListener('touchend', handleGlobalTouchEnd)
+    window.addEventListener('touchmove', handleGlobalTouchMove, { passive: false })
 
     return () => {
       window.removeEventListener('mouseup', handleGlobalMouseUp)
       window.removeEventListener('touchend', handleGlobalTouchEnd)
+      window.removeEventListener('touchmove', handleGlobalTouchMove)
     }
-  }, [])
+  }, [isDragging, handleMove])
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-100 via-sky-50 to-amber-50 p-4 md:p-8">
@@ -224,16 +232,16 @@ function App() {
           <svg
             ref={svgRef}
             width="100%"
-            height="auto"
             viewBox={`0 0 ${width} ${height}`}
             preserveAspectRatio="xMidYMid meet"
-            style={{ touchAction: 'none', cursor: isDragging ? 'grabbing' : 'grab' }}
+            style={{ touchAction: 'none', cursor: isDragging ? 'grabbing' : 'grab', height: 'auto' }}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleEnd}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleEnd}
+            onTouchCancel={handleEnd}
           >
             {/* 背景渐变 */}
             <defs>
