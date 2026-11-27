@@ -1,13 +1,13 @@
 /* ============================================================================
-   简历站点逻辑（简历内容请编辑 js/resume-data.js）
-   - 语言切换：默认中文，支持右上角切换及 ?lang=en / ?lang=zh 直达；
+   交互式在线简历模板逻辑（由 OhMyCV 本地模板生成）
+   - 语言切换：当数据同时包含 zh / en 时支持切换；
    - 主题切换：默认跟随系统，手动切换后记住偏好；
    - 联系方式保护：邮箱与手机号以 XOR + Base64 密文存储，点击联系或打印时解密。
    ============================================================================ */
 (function () {
   "use strict";
 
-  var D = window.RESUME_DATA;
+  var D = window.RESUME_DATA || {};
 
   var ICONS = {
     github: '<path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>',
@@ -44,7 +44,6 @@
       .replace(/"/g, "&quot;");
   }
 
-  /* 高亮条目前缀（例如「医疗防幻觉约束：...」），全量转义防 XSS */
   function formatBullet(text) {
     var m = String(text).match(/^([^：:]{2,36}[：:])(\s*.*)$/);
     if (!m) return esc(text);
@@ -52,6 +51,7 @@
   }
 
   function encodeCipher(plain) {
+    if (!plain || !D.contactKey || !D.contactKey.length) return "";
     var key = D.contactKey;
     var raw = "";
     for (var i = 0; i < plain.length; i++) {
@@ -61,13 +61,18 @@
   }
 
   function decodeCipher(cipher) {
-    var raw = atob(cipher);
-    var key = D.contactKey;
-    var out = "";
-    for (var i = 0; i < raw.length; i++) {
-      out += String.fromCharCode(raw.charCodeAt(i) ^ key[i % key.length]);
+    if (!cipher || !D.contactKey || !D.contactKey.length) return "";
+    try {
+      var raw = atob(cipher);
+      var key = D.contactKey;
+      var out = "";
+      for (var i = 0; i < raw.length; i++) {
+        out += String.fromCharCode(raw.charCodeAt(i) ^ key[i % key.length]);
+      }
+      return out;
+    } catch (e) {
+      return "";
     }
-    return out;
   }
 
   function storeGet(k) {
@@ -79,9 +84,14 @@
   }
 
   var app = document.getElementById("app");
-  var qsLang = new URLSearchParams(location.search).get("lang");
-  var lang = (qsLang === "zh" || qsLang === "en") ? qsLang
-    : (storeGet("resume-lang") === "en" ? "en" : "zh");
+  if (!app) return;
+
+  var hasDualLang = Boolean(D.zh && D.en);
+  var qsLang = "";
+  try { qsLang = new URLSearchParams(location.search).get("lang") || ""; } catch (e) {}
+  var lang = hasDualLang
+    ? ((qsLang === "zh" || qsLang === "en") ? qsLang : (storeGet("resume-lang") === "en" ? "en" : "zh"))
+    : (D.zh ? "zh" : "en");
   var theme = storeGet("resume-theme") ||
     (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
 
@@ -90,150 +100,190 @@
   }
 
   function render() {
-    var d = D[lang];
-    var ui = d.ui;
+    var d = D[lang] || D.zh || D.en;
+    if (!d) return;
+    var ui = d.ui || {};
     var heroIcons = ["briefcase", "mapPin", "layers"];
     var sy = window.scrollY;
+    var hasEmail = Boolean(D.emailCipher);
+    var hasPhone = Boolean(D.phoneCipher);
+    var hasContact = hasEmail || hasPhone;
+    var githubUrl = D.links && D.links.github ? D.links.github : "";
 
-    document.documentElement.lang = d.htmlLang;
-    document.title = d.title;
+    document.documentElement.lang = d.htmlLang || "zh-CN";
+    document.title = d.title || d.header.name || "Resume";
     var desc = document.querySelector('meta[name="description"]');
-    if (desc) desc.setAttribute("content", d.metaDesc);
+    if (desc && d.metaDesc) desc.setAttribute("content", d.metaDesc);
 
     var h = "";
 
     /* 顶部控制条 */
     h += '<div class="controls">'
-      + '<button class="ctl-btn" data-action="lang" aria-label="Switch language">' + esc(ui.langSwitch) + "</button>"
+      + (hasDualLang ? '<button class="ctl-btn" data-action="lang" aria-label="Switch language">' + esc(ui.langSwitch || "EN") + "</button>" : "")
       + '<button class="ctl-btn icon-only" data-action="theme" aria-label="Toggle theme">' + icon(theme === "dark" ? "sun" : "moon") + "</button>"
-      + '<button class="ctl-btn" data-action="print" aria-label="' + esc(ui.printBtn) + '">' + icon("printer") + '<span class="print-label">' + esc(ui.printBtn) + "</span></button>"
+      + '<button class="ctl-btn" data-action="print" aria-label="' + esc(ui.printBtn || "导出 PDF") + '">' + icon("printer") + '<span class="print-label">' + esc(ui.printBtn || "导出 PDF") + "</span></button>"
       + "</div>";
 
     /* 头部 */
     h += '<header class="hero">'
       + '<div class="hero-top"><div>'
-      + '<p class="role">' + esc(d.header.role) + "</p>"
+      + (d.header.role ? '<p class="role">' + esc(d.header.role) + "</p>" : "")
       + "<h1>" + esc(d.header.name) + "</h1></div>"
       + '<div class="hero-actions">'
-      + '<a class="btn btn-primary" href="' + esc(D.links.github) + '" target="_blank" rel="noopener noreferrer">' + icon("github") + esc(ui.githubBtn) + "</a>"
-      + '<button class="btn btn-ghost" data-action="contact">' + icon("mail") + esc(ui.contactBtn) + "</button>"
+      + (githubUrl ? '<a class="btn btn-primary" href="' + esc(githubUrl) + '" target="_blank" rel="noopener noreferrer">' + icon("github") + esc(ui.githubBtn || "GitHub") + "</a>" : "")
+      + (hasContact ? '<button class="btn btn-ghost" data-action="contact">' + icon("mail") + esc(ui.contactBtn || "联系我") + "</button>" : "")
       + "</div></div>"
-      + '<p class="tagline">' + esc(d.header.tagline) + "</p>"
-      + '<p class="hero-summary">' + esc(d.header.summary) + "</p>"
-      + '<div class="hero-meta">'
-      + d.header.meta.map(function (m, i) {
-          return "<span>" + icon(heroIcons[i % heroIcons.length]) + esc(m) + "</span>";
-        }).join("")
-      + "</div>"
+      + (d.header.tagline ? '<p class="tagline">' + esc(d.header.tagline) + "</p>" : "")
+      + (d.header.summary ? '<p class="hero-summary">' + esc(d.header.summary) + "</p>" : "")
+      + (d.header.meta && d.header.meta.length
+        ? '<div class="hero-meta">' + d.header.meta.map(function (m, i) {
+            return "<span>" + icon(heroIcons[i % heroIcons.length]) + esc(m) + "</span>";
+          }).join("") + "</div>"
+        : "")
       + '<div class="print-contact">'
-      + '<a id="printPhone" href="#"></a>'
-      + '<a id="printEmail" href="#"></a>'
-      + '<a href="' + esc(D.links.github) + '">' + esc(D.links.github.replace(/^https?:\/\//, "")) + "</a>"
+      + (hasPhone ? '<a id="printPhone" href="#"></a>' : "")
+      + (hasEmail ? '<a id="printEmail" href="#"></a>' : "")
+      + (githubUrl ? '<a href="' + esc(githubUrl) + '">' + esc(githubUrl.replace(/^https?:\/\//, "")) + "</a>" : "")
       + "</div></header>";
 
     /* 核心优势 */
-    h += '<section class="about-section"><h2>' + esc(d.about.title) + '</h2><div class="about-grid">'
-      + d.about.cards.map(function (c) {
-          return '<article class="about-card"><div class="icon-badge">' + icon(c.icon) + "</div><h3>" + esc(c.title) + "</h3><p>" + esc(c.desc) + "</p></article>";
-        }).join("")
-      + "</div></section>";
+    if (d.about && d.about.cards && d.about.cards.length) {
+      h += '<section class="about-section"><h2>' + esc(d.about.title) + '</h2><div class="about-grid">'
+        + d.about.cards.map(function (c) {
+            return '<article class="about-card"><div class="icon-badge">' + icon(c.icon) + "</div><h3>" + esc(c.title) + "</h3><p>" + esc(c.desc) + "</p></article>";
+          }).join("")
+        + "</div></section>";
+    }
 
     /* 技术能力 */
-    h += '<section class="skills-section"><h2>' + esc(d.skills.title) + '</h2><div class="skills">'
-      + d.skills.groups.map(function (g) {
-          return '<div class="skill-group"><h3>' + esc(g.name) + '</h3><div class="skill-pills">'
-            + g.items.map(function (s) { return '<span class="skill">' + esc(s) + "</span>"; }).join("")
-            + "</div></div>";
-        }).join("")
-      + "</div></section>";
+    if (d.skills && d.skills.groups && d.skills.groups.length) {
+      h += '<section class="skills-section"><h2>' + esc(d.skills.title) + '</h2><div class="skills">'
+        + d.skills.groups.map(function (g) {
+            return '<div class="skill-group"><h3>' + esc(g.name) + '</h3><div class="skill-pills">'
+              + (g.items || []).map(function (s) { return '<span class="skill">' + esc(s) + "</span>"; }).join("")
+              + "</div></div>";
+          }).join("")
+        + "</div></section>";
+    }
 
     /* 重点项目 */
-    h += '<section class="projects-section"><h2>' + esc(d.projects.title) + "</h2>"
-      + d.projects.items.map(function (p) {
-          var s = '<article class="project' + (p.featured ? " featured" : "") + '">'
-            + (p.featured ? '<span class="featured-badge">' + esc(ui.featuredBadge) + "</span>" : "")
-            + '<div class="proj-head"><h3>' + esc(p.name) + '</h3><span class="proj-period">' + esc(p.period) + "</span></div>"
-            + '<p class="proj-role">' + esc(p.role) + "</p>"
-            + '<p class="proj-desc">' + esc(p.desc) + "</p>"
-            + '<ul class="proj-bullets">'
-            + p.bullets.map(function (b) { return "<li>" + formatBullet(b) + "</li>"; }).join("")
-            + "</ul>";
-          if (p.tags && p.tags.length) {
-            s += '<div class="tags">'
-              + p.tags.map(function (t) { return '<span class="tag">' + esc(t) + "</span>"; }).join("")
-              + "</div>";
-          }
-          return s + "</article>";
-        }).join("")
-      + "</section>";
+    if (d.projects && d.projects.items && d.projects.items.length) {
+      h += '<section class="projects-section"><h2>' + esc(d.projects.title) + "</h2>"
+        + d.projects.items.map(function (p) {
+            var s = '<article class="project' + (p.featured ? " featured" : "") + '">'
+              + (p.featured ? '<span class="featured-badge">' + esc(ui.featuredBadge || "代表项目") + "</span>" : "")
+              + '<div class="proj-head"><h3>' + esc(p.name) + '</h3><span class="proj-period">' + esc(p.period || "") + "</span></div>"
+              + (p.role ? '<p class="proj-role">' + esc(p.role) + "</p>" : "")
+              + (p.desc ? '<p class="proj-desc">' + esc(p.desc) + "</p>" : "")
+              + (p.bullets && p.bullets.length
+                ? '<ul class="proj-bullets">' + p.bullets.map(function (b) { return "<li>" + formatBullet(b) + "</li>"; }).join("") + "</ul>"
+                : "");
+            if (p.tags && p.tags.length) {
+              s += '<div class="tags">'
+                + p.tags.map(function (t) { return '<span class="tag">' + esc(t) + "</span>"; }).join("")
+                + "</div>";
+            }
+            return s + "</article>";
+          }).join("")
+        + "</section>";
+    }
 
     /* 工作经历 */
-    h += '<section class="experience-section"><h2>' + esc(d.experience.title) + '</h2><div class="timeline">'
-      + d.experience.items.map(function (it) {
-          var s = '<article class="item"><div class="item-head"><div>'
-            + "<h3>" + esc(it.company) + "</h3>"
-            + '<p class="item-role">' + esc(it.role) + '</p></div><span class="period">' + esc(it.period) + "</span></div><ul>"
-            + it.bullets.map(function (b) { return "<li>" + formatBullet(b) + "</li>"; }).join("")
-            + "</ul>";
-          if (it.highlights && it.highlights.length) {
-            s += '<div class="highlights">'
-              + it.highlights.map(function (x) { return '<span class="highlight">' + icon("star") + esc(x) + "</span>"; }).join("")
-              + "</div>";
-          }
-          return s + "</article>";
-        }).join("")
-      + "</div></section>";
+    if (d.experience && d.experience.items && d.experience.items.length) {
+      h += '<section class="experience-section"><h2>' + esc(d.experience.title) + '</h2><div class="timeline">'
+        + d.experience.items.map(function (it) {
+            var s = '<article class="item"><div class="item-head"><div>'
+              + "<h3>" + esc(it.company) + "</h3>"
+              + (it.role ? '<p class="item-role">' + esc(it.role) + "</p>" : "")
+              + '</div><span class="period">' + esc(it.period || "") + "</span></div>"
+              + (it.bullets && it.bullets.length
+                ? "<ul>" + it.bullets.map(function (b) { return "<li>" + formatBullet(b) + "</li>"; }).join("") + "</ul>"
+                : "");
+            if (it.highlights && it.highlights.length) {
+              s += '<div class="highlights">'
+                + it.highlights.map(function (x) { return '<span class="highlight">' + icon("star") + esc(x) + "</span>"; }).join("")
+                + "</div>";
+            }
+            return s + "</article>";
+          }).join("")
+        + "</div></section>";
+    }
 
     /* 教育背景与开源参与 */
-    h += '<section><div class="duo">'
-      + '<div class="duo-card"><h2>' + esc(d.education.title) + "</h2>"
-      + d.education.items.map(function (e) {
-          return '<p class="edu"><b>' + esc(e.school) + "</b><span>" + esc(e.degree) + " · " + esc(e.period) + "</span></p>";
-        }).join("")
-      + "</div>"
-      + '<div class="duo-card"><h2>' + esc(d.openSource.title) + '</h2><div class="os-list">'
-      + d.openSource.items.map(function (o) {
-          var renderLink = function (name, urlKey) {
-            var href = urlKey && D.links[urlKey];
-            return href
-              ? '<a href="' + esc(href) + '" target="_blank" rel="noopener noreferrer">' + esc(name) + icon("external") + "</a>"
-              : '<span class="os-name">' + esc(name) + "</span>";
-          };
-          var nameHtml = o.links
-            ? o.links.map(function (l) { return renderLink(l.name, l.urlKey); }).join(' <span class="os-desc">/</span> ')
-            : renderLink(o.name, o.urlKey);
-          return '<div class="os-row"><div>' + nameHtml + ' <span class="os-desc">· ' + esc(o.desc) + "</span></div></div>";
-        }).join("")
-      + "</div></div></div></section>";
+    var hasEdu = Boolean(d.education && d.education.items && d.education.items.length);
+    var hasOs = Boolean(d.openSource && d.openSource.items && d.openSource.items.length);
+    if (hasEdu || hasOs) {
+      h += '<section><div class="duo"' + (hasEdu && hasOs ? "" : ' style="grid-template-columns:1fr"') + ">";
+      if (hasEdu) {
+        h += '<div class="duo-card"><h2>' + esc(d.education.title) + "</h2>"
+          + d.education.items.map(function (e) {
+              var sub = [e.degree, e.period].filter(Boolean).join(" · ");
+              return '<p class="edu"><b>' + esc(e.school) + "</b>" + (sub ? "<span>" + esc(sub) + "</span>" : "") + "</p>";
+            }).join("")
+          + "</div>";
+      }
+      if (hasOs) {
+        h += '<div class="duo-card"><h2>' + esc(d.openSource.title) + '</h2><div class="os-list">'
+          + d.openSource.items.map(function (o) {
+              var renderLink = function (name, urlKey) {
+                var href = urlKey && D.links && D.links[urlKey];
+                return href
+                  ? '<a href="' + esc(href) + '" target="_blank" rel="noopener noreferrer">' + esc(name) + icon("external") + "</a>"
+                  : '<span class="os-name">' + esc(name) + "</span>";
+              };
+              var nameHtml = o.links
+                ? o.links.map(function (l) { return renderLink(l.name, l.urlKey); }).join(' <span class="os-desc">/</span> ')
+                : renderLink(o.name, o.urlKey);
+              return '<div class="os-row"><div>' + nameHtml + ' <span class="os-desc">· ' + esc(o.desc) + "</span></div></div>";
+            }).join("")
+          + "</div></div>";
+      }
+      h += "</div></section>";
+    }
 
-    /* 联系弹窗与提示条（默认脱敏占位，点击眼睛图标可反复解密显示 / 加密隐藏） */
-    var eyeIcons = '<span class="eye-closed">' + icon("eyeOff") + '</span><span class="eye-open">' + icon("eye") + "</span>";
-    h += '<div class="modal-overlay" id="modalOverlay">'
-      + '<div class="modal" role="dialog" aria-modal="true" aria-label="' + esc(ui.contactTitle) + '">'
-      + '<button class="modal-close" data-action="close" aria-label="Close">' + icon("x") + "</button>"
-      + "<h3>" + icon("mail") + esc(ui.contactTitle) + "</h3>"
-      + '<p class="modal-hint">' + esc(ui.modalHint) + "</p>"
-      + '<div class="contact-rows">'
-      + '<div class="contact-row" id="emailRow"><div class="contact-row-head">'
-      + '<div class="contact-row-label">' + icon("mail") + esc(ui.emailLabel) + "</div>"
-      + '<button class="eye-btn" id="emailToggle" data-action="toggle-email" aria-pressed="false" aria-label="' + esc(ui.showContact) + '" title="' + esc(ui.showContact) + '">' + eyeIcons + "</button>"
-      + "</div>"
-      + '<div class="contact-row-main"><span class="contact-val" id="emailBox" data-action="reveal-email">***@***.***</span>'
-      + '<div class="contact-row-actions"><div class="contact-revealed-actions">'
-      + '<button class="btn btn-primary btn-sm" data-action="copy-email">' + icon("copy") + esc(ui.copyBtn) + "</button>"
-      + '<a class="btn btn-ghost btn-sm" id="mailtoLink" href="#">' + icon("send") + esc(ui.mailBtn) + "</a>"
-      + "</div></div></div></div>"
-      + '<div class="contact-row" id="phoneRow"><div class="contact-row-head">'
-      + '<div class="contact-row-label">' + icon("phone") + esc(ui.phoneLabel) + "</div>"
-      + '<button class="eye-btn" id="phoneToggle" data-action="toggle-phone" aria-pressed="false" aria-label="' + esc(ui.showContact) + '" title="' + esc(ui.showContact) + '">' + eyeIcons + "</button>"
-      + "</div>"
-      + '<div class="contact-row-main"><span class="contact-val" id="phoneBox" data-action="reveal-phone">+86 ***-****-****</span>'
-      + '<div class="contact-row-actions"><div class="contact-revealed-actions">'
-      + '<button class="btn btn-primary btn-sm" data-action="copy-phone">' + icon("copy") + esc(ui.copyBtn) + "</button>"
-      + '<a class="btn btn-ghost btn-sm" id="telLink" href="#">' + icon("phone") + esc(ui.callBtn) + "</a>"
-      + "</div></div></div></div>"
-      + "</div></div></div>"
-      + '<div class="toast" id="toast">' + icon("check") + '<span id="toastText"></span></div>';
+    /* 额外未归类章节兜底渲染 */
+    if (d.extraSections && d.extraSections.length) {
+      d.extraSections.forEach(function (sec) {
+        h += '<section class="extra-section"><h2>' + esc(sec.title) + '</h2><div class="duo-card">'
+          + (sec.lines || []).map(function (ln) { return '<p class="proj-desc">' + formatBullet(ln) + "</p>"; }).join("")
+          + "</div></section>";
+      });
+    }
+
+    /* 联系弹窗与提示条 */
+    if (hasContact) {
+      var eyeIcons = '<span class="eye-closed">' + icon("eyeOff") + '</span><span class="eye-open">' + icon("eye") + "</span>";
+      h += '<div class="modal-overlay" id="modalOverlay">'
+        + '<div class="modal" role="dialog" aria-modal="true" aria-label="' + esc(ui.contactTitle || "联系我") + '">'
+        + '<button class="modal-close" data-action="close" aria-label="Close">' + icon("x") + "</button>"
+        + "<h3>" + icon("mail") + esc(ui.contactTitle || "联系我") + "</h3>"
+        + '<p class="modal-hint">' + esc(ui.modalHint || "") + "</p>"
+        + '<div class="contact-rows">';
+      if (hasEmail) {
+        h += '<div class="contact-row" id="emailRow"><div class="contact-row-head">'
+          + '<div class="contact-row-label">' + icon("mail") + esc(ui.emailLabel || "电子邮箱") + "</div>"
+          + '<button class="eye-btn" id="emailToggle" data-action="toggle-email" aria-pressed="false" aria-label="' + esc(ui.showContact || "") + '" title="' + esc(ui.showContact || "") + '">' + eyeIcons + "</button>"
+          + "</div>"
+          + '<div class="contact-row-main"><span class="contact-val" id="emailBox" data-action="reveal-email">***@***.***</span>'
+          + '<div class="contact-row-actions"><div class="contact-revealed-actions">'
+          + '<button class="btn btn-primary btn-sm" data-action="copy-email">' + icon("copy") + esc(ui.copyBtn || "复制") + "</button>"
+          + '<a class="btn btn-ghost btn-sm" id="mailtoLink" href="#">' + icon("send") + esc(ui.mailBtn || "发邮件") + "</a>"
+          + "</div></div></div></div>";
+      }
+      if (hasPhone) {
+        h += '<div class="contact-row" id="phoneRow"><div class="contact-row-head">'
+          + '<div class="contact-row-label">' + icon("phone") + esc(ui.phoneLabel || "联系电话") + "</div>"
+          + '<button class="eye-btn" id="phoneToggle" data-action="toggle-phone" aria-pressed="false" aria-label="' + esc(ui.showContact || "") + '" title="' + esc(ui.showContact || "") + '">' + eyeIcons + "</button>"
+          + "</div>"
+          + '<div class="contact-row-main"><span class="contact-val" id="phoneBox" data-action="reveal-phone">+86 ***-****-****</span>'
+          + '<div class="contact-row-actions"><div class="contact-revealed-actions">'
+          + '<button class="btn btn-primary btn-sm" data-action="copy-phone">' + icon("copy") + esc(ui.copyBtn || "复制") + "</button>"
+          + '<a class="btn btn-ghost btn-sm" id="telLink" href="#">' + icon("phone") + esc(ui.callBtn || "拨打") + "</a>"
+          + "</div></div></div></div>";
+      }
+      h += "</div></div></div>";
+    }
+    h += '<div class="toast" id="toast">' + icon("check") + '<span id="toastText"></span></div>';
 
     app.innerHTML = h;
     window.scrollTo(0, sy);
@@ -243,6 +293,7 @@
 
   function showToast(msg) {
     var t = document.getElementById("toast");
+    if (!t) return;
     document.getElementById("toastText").textContent = msg;
     t.classList.add("show");
     clearTimeout(toastTimer);
@@ -254,11 +305,11 @@
     var phone = decodeCipher(D.phoneCipher);
     var emailLink = document.getElementById("printEmail");
     var phoneLink = document.getElementById("printPhone");
-    if (emailLink) {
+    if (emailLink && email) {
       emailLink.textContent = email;
       emailLink.href = "mailto:" + email;
     }
-    if (phoneLink) {
+    if (phoneLink && phone) {
       phoneLink.textContent = phone;
       phoneLink.href = "tel:" + phone.replace(/\s+/g, "");
     }
@@ -285,7 +336,7 @@
     var box = document.getElementById(cfg.boxId);
     var link = document.getElementById(cfg.linkId);
     var btn = document.getElementById(cfg.toggleId);
-    var ui = D[lang].ui;
+    var ui = (D[lang] || D.zh || {}).ui || {};
 
     if (show && !isShown) {
       var plain = decodeCipher(cfg.cipher);
@@ -294,8 +345,8 @@
       row.setAttribute("data-revealed", "true");
       if (btn) {
         btn.setAttribute("aria-pressed", "true");
-        btn.setAttribute("aria-label", ui.hideContact);
-        btn.setAttribute("title", ui.hideContact);
+        btn.setAttribute("aria-label", ui.hideContact || "");
+        btn.setAttribute("title", ui.hideContact || "");
       }
     } else if (!show) {
       if (isShown) cfg.cipher = encodeCipher(box.textContent);
@@ -304,8 +355,8 @@
       link.href = "#";
       if (btn) {
         btn.setAttribute("aria-pressed", "false");
-        btn.setAttribute("aria-label", ui.showContact);
-        btn.setAttribute("title", ui.showContact);
+        btn.setAttribute("aria-label", ui.showContact || "");
+        btn.setAttribute("title", ui.showContact || "");
       }
     }
   }
@@ -324,7 +375,8 @@
 
   function openModal() {
     resetModalContacts();
-    document.getElementById("modalOverlay").classList.add("open");
+    var m = document.getElementById("modalOverlay");
+    if (m) m.classList.add("open");
   }
 
   function closeModal() {
@@ -360,7 +412,8 @@
       return;
     }
     var action = t.getAttribute("data-action");
-    if (action === "lang") {
+    var ui = (D[lang] || D.zh || {}).ui || {};
+    if (action === "lang" && hasDualLang) {
       lang = lang === "zh" ? "en" : "zh";
       storeSet("resume-lang", lang);
       try { history.replaceState(null, "", "?lang=" + lang); } catch (err) {}
@@ -386,9 +439,9 @@
     } else if (action === "reveal-phone") {
       setContactRevealed("phone", true);
     } else if (action === "copy-email") {
-      copyText(document.getElementById("emailBox").textContent, D[lang].ui.copiedEmail);
+      copyText(document.getElementById("emailBox").textContent, ui.copiedEmail || "已复制");
     } else if (action === "copy-phone") {
-      copyText(document.getElementById("phoneBox").textContent, D[lang].ui.copiedPhone);
+      copyText(document.getElementById("phoneBox").textContent, ui.copiedPhone || "已复制");
     }
   });
 
@@ -399,4 +452,5 @@
 
   applyTheme();
   render();
+  if (window.__AUTO_PREPARE_PRINT__) preparePrint();
 })();

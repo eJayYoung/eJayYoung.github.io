@@ -34,7 +34,7 @@ window.RESUME_DATA = {
     33
   ],
   "emailCipher": "ACAAAA0cHAADAnIBBAUPBiUM",
-  "phoneCipher": "TnJXWWNSQFhdVQsIHwcWVnk=",
+  "phoneCipher": "VH1SVGJVSk1AVAUDAQ==",
   "zh": {
     "htmlLang": "zh-CN",
     "title": "杨逸杰 · 资深全栈开发工程师 · 个人简历",
